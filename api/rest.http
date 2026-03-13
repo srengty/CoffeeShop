@@ -1,0 +1,41 @@
+@url = https://dev.orderzone.net/webservice_ionic/oraApiNew
+
+POST {{url}}/applogin HTTP/1.1
+Content-Type: application/json
+
+{
+  "login_email": "bongpooh939@gmail.com",
+  "login_password": "12345678"
+}
+
+###
+POST {{url}}/menu_category_list_new HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer 123|bpdFQzr85AwcczRGC46R171DX4C9y3bve1xgK3iu8d5eff7b
+
+{
+  "userid": "171",
+  "resid": "171",
+  "lat": 1,
+  "long":1,
+  "maincateid": 328,
+  "nextpage": 0
+}
+
+###
+POST {{url}}/employee/login HTTP/1.1
+Content-Type: application/json
+
+{
+  "email": "sung@gmail.com",
+  "password": "12345678"
+}
+
+###
+POST {{url}}/employee/login HTTP/1.1
+Content-Type: application/json
+
+{
+  "email": "mongkol@gmail.com",
+  "password": "12345678"
+}

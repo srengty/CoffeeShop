@@ -1,13 +1,67 @@
 import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import { Animated, Button, StyleSheet } from 'react-native';
 
 import { HelloWave } from '@/components/hello-wave';
 import ParallaxScrollView from '@/components/parallax-scroll-view';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { Link } from 'expo-router';
+import { Restaurant } from '@/types/Restaurant';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { router } from 'expo-router';
+import { useEffect, useRef, useState } from 'react';
 
 export default function HomeScreen() {
+  const [user, setUser] = useState<Restaurant | null>(null);
+  const colorAnim = useRef(new Animated.Value(0x000000)).current;
+  const sizeAnim = useRef(new Animated.Value(10)).current;
+  const position = useRef(new Animated.ValueXY({ x: 0, y: 0 })).current;
+  const twirl = useRef(new Animated.Value(0)).current;
+  const gestureState = { vx: 0.2, vy: 0.2 };  // Placeholder for gesture velocity
+  useEffect(() => {
+    AsyncStorage.getItem('user').then(user => {
+      if (user) {
+        setUser(JSON.parse(user));
+      }
+    });
+    Animated.timing(colorAnim, {
+      toValue: 0xFF0000, // Red color
+      duration: 20000,
+      useNativeDriver: false,
+    }).start();
+    Animated.timing(sizeAnim, {
+      toValue: 30,
+      duration: 2000,
+      useNativeDriver: false,
+    }).start();
+    Animated.sequence([
+      Animated.timing(twirl, { 
+        toValue: 0,
+        duration: 0,
+        useNativeDriver: true,
+      }),
+      // decay, then spring to start  and twirl
+      Animated.decay(position, {
+        // coast to a stop
+        velocity: { x: gestureState.vx, y: gestureState.vy }, // velocity from gesture release
+        deceleration: 0.997,
+        useNativeDriver: true,
+      }),
+      Animated.parallel([
+        // after decay, in parallel:
+        Animated.spring(position, {
+          delay: 2000,
+          toValue: { x: 0, y: 0 }, // return to start
+          useNativeDriver: true,
+        }),
+        Animated.timing(twirl, {
+          duration: 2000,
+          // and twirl
+          toValue: 360,
+          useNativeDriver: true,
+        }),
+      ]),
+    ]).start();
+  }, [colorAnim, sizeAnim, position, twirl, user]);
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
@@ -18,61 +72,41 @@ export default function HomeScreen() {
         />
       }>
       <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
+        <ThemedText type="title">Welcome {user?.username}!</ThemedText>
         <HelloWave />
       </ThemedView>
       <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
+        <Animated.Text style={{
+          color: colorAnim.interpolate({
+            inputRange: [0x000000, 0xFF0000],
+            outputRange: ['#000000', '#FF0000'],
+          }), fontSize: sizeAnim
+        }}>
+          {user?.useremail??'Your email will appear here after login'}
+        </Animated.Text>
       </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <Link href="/modal">
-          <Link.Trigger>
-            <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-          </Link.Trigger>
-          <Link.Preview />
-          <Link.Menu>
-            <Link.MenuAction title="Action" icon="cube" onPress={() => alert('Action pressed')} />
-            <Link.MenuAction
-              title="Share"
-              icon="square.and.arrow.up"
-              onPress={() => alert('Share pressed')}
-            />
-            <Link.Menu title="More" icon="ellipsis">
-              <Link.MenuAction
-                title="Delete"
-                icon="trash"
-                destructive
-                onPress={() => alert('Delete pressed')}
-              />
-            </Link.Menu>
-          </Link.Menu>
-        </Link>
-
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
+      <Animated.View style={{
+        position: 'absolute',
+        transform: [
+          { translateX: position.x },
+          { translateY: position.y },
+          {
+            rotate: twirl.interpolate({
+              inputRange: [0, 360],
+              outputRange: ['0deg', '360deg'],
+            })
+          }
+        ]
+      }}>
+        <ThemedText>FT SD A 6</ThemedText>
+      </Animated.View>
+      <ThemedView>
+        <Button title="Logout" onPress={() => {
+          AsyncStorage.removeItem('user').then(() => {
+            setUser(null);
+            router.replace('/login');
+          });
+        }} />
       </ThemedView>
     </ParallaxScrollView>
   );
