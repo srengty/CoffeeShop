@@ -9,21 +9,25 @@ export default function LoginScreen() {
     const [loading, setLoading] = React.useState(false);
     const doLogin = async()=>{
         setLoading(true);
-        let response = await fetch('https://dev.orderzone.net/webservice_ionic/oraApiNew/applogin',{
+        let response = await fetch('https://dev.orderzone.net/webservice_ionic/oraApiNew/employee/login',{
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
             },
+            mode: 'same-origin',
             body: JSON.stringify({
-                login_email: email,
-                login_password: password
+                email: email,
+                password: password
             })
         });
         if(response.ok){
             let data = (await response.json());
             if(data.token){
-                alert('Login successful: ' + data.username);
-                await AsyncStorage.setItem('user', JSON.stringify(data));
+                alert('Login successful: ' + data.employee.name);
+                await AsyncStorage.setItem('user', JSON.stringify(data.employee));
+                await AsyncStorage.setItem('token', data.token);
+
                 router.replace('/(tabs)');
             }else{
                 alert('Invalid credentials');

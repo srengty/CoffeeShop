@@ -3,7 +3,7 @@
     "name": "CoffeeShop",
     "slug": "CoffeeShop",
     "version": "1.0.0",
-    "orientation": "portrait",
+    "orientation": "landscape",
     "icon": "./assets/images/icon.png",
     "scheme": "coffeeshop",
     "userInterfaceStyle": "automatic",

@@ -11,7 +11,7 @@ Content-Type: application/json
 ###
 POST {{url}}/menu_category_list_new HTTP/1.1
 Content-Type: application/json
-Authorization: Bearer 123|bpdFQzr85AwcczRGC46R171DX4C9y3bve1xgK3iu8d5eff7b
+Authorization: Bearer 166|xUi4HBNxliAvSL5PayukgPH0sJIh2Gqx8vCaQJTD3a984f01
 
 {
   "userid": "171",
@@ -38,4 +38,36 @@ Content-Type: application/json
 {
   "email": "mongkol@gmail.com",
   "password": "12345678"
+}
+
+###
+POST https://dev.orderzone.net/webservice_ionic/oraApiNew/employee/login HTTP/1.1
+Content-Type: application/json
+
+{
+  "email": "vichheka@gmail.com",
+  "password": "12345678"
+}
+
+###
+POST https://dev.orderzone.net/webservice_ionic/oraApiNew/employee/login HTTP/1.1
+Content-Type: application/json
+
+{
+  "email": "nisa@gmail.com",
+  "password": "12345678"
+}
+
+###
+POST {{url}}/menu_category_list_new HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer 243|91KECKEPMAic0Ot4Q7S4QnbH1HjajqIBWzcDwtT9e94165f2
+
+{
+  "userid": "171",
+  "resid": "171",
+  "lat": 1,
+  "long":1,
+  "maincateid": 328,
+  "nextpage": 0
 }

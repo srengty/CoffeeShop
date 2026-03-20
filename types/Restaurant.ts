@@ -8,7 +8,7 @@ export type Restaurant = {
     userzip: string;
     logo: string;
     type: string;
-    username: string;
+    name: string;
     service_fee: number;
     service_fee_type: string;
     tax: number;
