@@ -1,5 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Image } from "expo-image";
+import { router } from "expo-router";
 import * as ScreenOrientation from "expo-screen-orientation";
 import React, { useEffect, useState } from "react";
 import {
@@ -183,7 +184,11 @@ function ItemView({ item }: { item: any }) {
     "https://dev.orderzone.net/",
   );
   return (
-    <View
+    <TouchableOpacity
+      onPress={() => {
+        AsyncStorage.setItem("selectedProduct", JSON.stringify(item));
+        router.push("/order-options");
+      }}
       style={{
         flex: 1,
         borderWidth: 1,
@@ -224,7 +229,7 @@ function ItemView({ item }: { item: any }) {
           ${item.menu_price.toFixed(2)}
         </Text>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 }
 
